@@ -1,0 +1,648 @@
+/* ===========================
+   MOODIFY — style.css
+   Mobile-first + Desktop layout
+   =========================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: #06060a;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ============================
+   DESKTOP WRAPPER
+   On large screens we show a
+   split: hero panel (left) +
+   phone frame (right)
+   ============================ */
+
+.desktop-wrapper {
+  display: contents; /* on mobile, wrapper is invisible */
+}
+
+/* ── App Shell (the phone/app area) ── */
+.app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  background: #0a0a0f;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Noise texture overlay ── */
+.noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Ambient blobs ── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+  transition: background 1s ease, opacity 1s ease;
+}
+
+#blob1 { width: 320px; height: 320px; top: -80px;  right: -60px;  background: #7c3aed; }
+#blob2 { width: 280px; height: 280px; bottom: -60px; left: -80px; background: #1DB954; opacity: 0.08; }
+#blob3 { width: 200px; height: 200px; top: 50%;    left: 40%;    background: #b794f4; opacity: 0.06; }
+
+/* ── Screens ── */
+.screen {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 48px 32px 40px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeUp 0.45s ease forwards;
+}
+
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Logo ── */
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  color: #fff;
+  letter-spacing: -1.5px;
+  margin-bottom: 6px;
+}
+.logo.small { font-size: 28px; margin-bottom: 4px; }
+.logo span  { color: #b794f4; }
+
+/* ── Tagline ── */
+.tagline {
+  font-size: 12px;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+/* ── Step dots ── */
+.step-dots { display: flex; gap: 6px; margin-bottom: 32px; }
+
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+.dot.active { background: #b794f4; width: 20px; border-radius: 3px; }
+
+/* ── Question text ── */
+.question {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.q-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.38);
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* ── Music app grid ── */
+.music-apps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.app-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  color: rgba(255,255,255,0.65);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+.app-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+.app-btn.selected {
+  background: rgba(183,148,244,0.15);
+  border-color: #b794f4;
+  color: #fff;
+}
+
+.app-icon {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.app-icon.spotify { background: #1DB954; }
+.app-icon.apple   { background: #fc3c44; }
+.app-icon.youtube { background: #ff0000; }
+.app-icon.amazon  { background: #00a8e0; }
+
+/* ── Primary button ── */
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #b794f4, #7c3aed);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.btn-primary:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.28; cursor: not-allowed; }
+.btn-primary.green { background: linear-gradient(135deg, #1DB954, #15803d); }
+
+/* ── Back button ── */
+.back-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.3);
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 16px;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: rgba(255,255,255,0.6); }
+
+/* ── Login card ── */
+.login-card {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 28px 24px;
+  margin-bottom: 20px;
+}
+.login-platform { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+
+.platform-icon {
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  background: #1DB954;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.platform-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: #fff; }
+.platform-sub  { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+
+.input-field {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 13px 16px;
+  color: rgba(255,255,255,0.8);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-field::placeholder { color: rgba(255,255,255,0.3); }
+.input-field:focus { border-color: #b794f4; }
+
+.login-notice {
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* ── Mood grid ── */
+.moods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+.mood-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.mood-btn:hover { background: rgba(255,255,255,0.09); transform: scale(1.03); }
+.mood-btn .emoji { font-size: 28px; }
+.mood-btn .label { font-size: 13px; font-weight: 500; color: #fff; }
+.mood-btn .desc  { font-size: 10px; color: rgba(255,255,255,0.35); }
+
+.mood-happy.selected     { background: rgba(251,191,36,0.12);  border: 2px solid #fbbf24; }
+.mood-sad.selected       { background: rgba(99,102,241,0.15);  border: 2px solid #818cf8; }
+.mood-energetic.selected { background: rgba(239,68,68,0.12);   border: 2px solid #f87171; }
+.mood-chill.selected     { background: rgba(45,212,191,0.12);  border: 2px solid #2dd4bf; }
+.mood-romantic.selected  { background: rgba(244,114,182,0.12); border: 2px solid #f472b6; }
+.mood-focus.selected     { background: rgba(139,92,246,0.15);  border: 2px solid #a78bfa; }
+
+/* ── Playlist screen ── */
+.success-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(29,185,84,0.15);
+  border: 2px solid #1DB954;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  color: #1DB954;
+  margin-bottom: 16px;
+  transition: background 0.5s, border-color 0.5s, color 0.5s;
+}
+.playlist-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.38);
+  text-align: center;
+  margin-top: -4px;
+  margin-bottom: 24px;
+}
+.playlist-card {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.playlist-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.playlist-art {
+  width: 56px; height: 56px;
+  border-radius: 12px;
+  background: rgba(251,191,36,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+  transition: background 0.4s;
+}
+.playlist-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+.playlist-meta  { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 3px; }
+
+/* ── Track list ── */
+.track-list { display: flex; flex-direction: column; }
+.track {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.track:last-child { border-bottom: none; }
+.track-num  { font-size: 12px; color: rgba(255,255,255,0.22); width: 16px; text-align: center; flex-shrink: 0; }
+.track-info { flex: 1; min-width: 0; }
+.track-name {
+  font-size: 13px; color: #fff; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.track-artist { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+.track-dur    { font-size: 12px; color: rgba(255,255,255,0.28); flex-shrink: 0; }
+
+/* ============================
+   SMALL MOBILE (< 380px)
+   ============================ */
+@media (max-width: 380px) {
+  .screen   { padding: 36px 18px 32px; }
+  .logo     { font-size: 34px; }
+  .question { font-size: 19px; }
+  .tagline  { margin-bottom: 28px; }
+  .moods    { gap: 8px; }
+  .mood-btn { padding: 14px 8px; }
+  .mood-btn .emoji { font-size: 24px; }
+}
+
+/* ============================
+   TABLET (600px – 899px)
+   Centered card, no side panel
+   ============================ */
+@media (min-width: 600px) and (max-width: 899px) {
+  body { background: #06060a; padding: 40px 20px; align-items: flex-start; }
+
+  .app {
+    max-width: 480px;
+    min-height: unset;
+    border-radius: 32px;
+    margin: 0 auto;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.7);
+  }
+
+  .screen { padding: 52px 40px 44px; }
+
+  .music-apps { grid-template-columns: repeat(4, 1fr); }
+
+  .moods { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ============================
+   DESKTOP (≥ 900px)
+   Split layout: hero left,
+   phone frame right
+   ============================ */
+@media (min-width: 900px) {
+  body {
+    background: #06060a;
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .desktop-wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* ── Left hero panel ── */
+  .hero-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 72px;
+    background: #0a0a0f;
+  }
+
+  .hero-blob-a {
+    position: absolute;
+    width: 600px; height: 600px;
+    top: -150px; left: -150px;
+    border-radius: 50%;
+    background: #7c3aed;
+    filter: blur(120px);
+    opacity: 0.2;
+    pointer-events: none;
+    transition: background 1s ease;
+  }
+  .hero-blob-b {
+    position: absolute;
+    width: 400px; height: 400px;
+    bottom: -100px; right: -80px;
+    border-radius: 50%;
+    background: #1DB954;
+    filter: blur(100px);
+    opacity: 0.1;
+    pointer-events: none;
+  }
+
+  .hero-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    letter-spacing: -3px;
+    color: #fff;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-logo span { color: #b794f4; }
+
+  .hero-tagline {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-desc {
+    font-size: 18px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+    max-width: 440px;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-desc strong { color: #fff; font-weight: 500; }
+
+  .hero-features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .feat-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: rgba(183,148,244,0.12);
+    border: 1px solid rgba(183,148,244,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .feat-text { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .feat-text strong { display: block; color: #fff; font-weight: 500; margin-bottom: 2px; font-size: 15px; }
+
+  .hero-footer {
+    margin-top: 64px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Right phone-frame panel ── */
+  .phone-panel {
+    width: 420px;
+    flex-shrink: 0;
+    background: #111118;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    border-left: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .phone-frame {
+    width: 340px;
+    border-radius: 48px;
+    background: #0a0a0f;
+    border: 8px solid #1e1e2e;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.06),
+      0 60px 100px rgba(0,0,0,0.8),
+      inset 0 0 0 1px rgba(255,255,255,0.03);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Notch */
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 28px;
+    background: #1e1e2e;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  /* The .app inside the frame */
+  .phone-frame .app {
+    width: 100%;
+    max-width: none;
+    min-height: 680px;
+    border-radius: 0;
+  }
+
+  /* Tighten screens a little for the frame */
+  .phone-frame .screen {
+    padding: 56px 24px 32px;
+  }
+
+  .phone-frame .logo        { font-size: 32px; }
+  .phone-frame .logo.small  { font-size: 24px; }
+  .phone-frame .question    { font-size: 18px; }
+  .phone-frame .tagline     { margin-bottom: 24px; font-size: 11px; }
+  .phone-frame .step-dots   { margin-bottom: 20px; }
+
+  .phone-frame .music-apps  { gap: 8px; margin-bottom: 20px; }
+  .phone-frame .app-btn     { padding: 14px 8px; font-size: 12px; gap: 7px; }
+  .phone-frame .app-icon    { width: 36px; height: 36px; font-size: 17px; border-radius: 10px; }
+
+  .phone-frame .moods       { gap: 8px; margin-bottom: 20px; }
+  .phone-frame .mood-btn    { padding: 13px 8px; gap: 5px; border-radius: 13px; }
+  .phone-frame .mood-btn .emoji { font-size: 22px; }
+  .phone-frame .mood-btn .label { font-size: 12px; }
+  .phone-frame .mood-btn .desc  { font-size: 9px; }
+
+  .phone-frame .btn-primary { padding: 13px; font-size: 14px; border-radius: 12px; }
+  .phone-frame .back-btn    { font-size: 12px; margin-top: 10px; }
+
+  .phone-frame .login-card  { padding: 20px 18px; }
+  .phone-frame .platform-name { font-size: 16px; }
+  .phone-frame .input-field { padding: 11px 14px; font-size: 13px; }
+
+  .phone-frame .playlist-card { padding: 16px; }
+  .phone-frame .playlist-title { font-size: 14px; }
+  .phone-frame .track { padding: 8px 0; }
+  .phone-frame .track-name { font-size: 12px; }
+  .phone-frame .track-artist { font-size: 10px; }
+  .phone-frame .success-icon { width: 52px; height: 52px; font-size: 22px; margin-bottom: 12px; }
+  .phone-frame .playlist-sub { font-size: 12px; margin-bottom: 16px; }
+  .phone-frame .playlist-art { width: 48px; height: 48px; font-size: 24px; }
+}
+
+/* ============================
+   LARGE DESKTOP (≥ 1200px)
+   Give the hero panel more room
+   ============================ */
+@media (min-width: 1200px) {
+  .hero-panel { padding: 80px 96px; }
+  .phone-panel { width: 480px; padding: 48px 40px; }
+  .phone-frame { width: 360px; }
+  .phone-frame .app { min-height: 720px; }
+}
+
+/* ── OAuth info list ── */
+.oauth-info {
+  background: rgba(29,185,84,0.06);
+  border: 1px solid rgba(29,185,84,0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.oauth-info-row {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── Coming soon box ── */
+.coming-soon-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+/* ── Loading spinner screen ── */
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(183,148,244,0.2);
+  border-top-color: #b794f4;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-msg {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  transition: opacity 0.3s;
+}

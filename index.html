@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moodify — music for your moment</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="desktop-wrapper">
+
+  <!-- ── Left hero panel (desktop only) ── -->
+  <div class="hero-panel">
+    <div class="hero-blob-a" id="heroBlob"></div>
+    <div class="hero-blob-b"></div>
+    <div class="hero-logo">mood<span>ify</span></div>
+    <div class="hero-tagline">music for your moment</div>
+    <p class="hero-desc">
+      Tell us your <strong>mood</strong>, and Moodify builds a playlist just for you —
+      pulled straight from your own library. No new artists, no surprises.
+      Only songs you already love.
+    </p>
+    <div class="hero-features">
+      <div class="hero-feature">
+        <div class="feat-icon">🎵</div>
+        <div class="feat-text">
+          <strong>Your library, your rules</strong>
+          Songs come only from your liked tracks and playlists
+        </div>
+      </div>
+      <div class="hero-feature">
+        <div class="feat-icon">😄</div>
+        <div class="feat-text">
+          <strong>Mood-matched picks</strong>
+          6 moods mapped to tempo, energy &amp; vibe
+        </div>
+      </div>
+      <div class="hero-feature">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-text">
+          <strong>Instant playlist</strong>
+          Ready in seconds, saved directly to your app
+        </div>
+      </div>
+    </div>
+    <div class="hero-footer">© 2025 Moodify · Free to use · No ads</div>
+  </div>
+
+  <!-- ── Right: phone frame on desktop, full screen on mobile ── -->
+  <div class="phone-panel">
+  <div class="phone-frame">
+
+  <div class="app" id="moodifyApp">
+    <div class="noise"></div>
+    <div class="blob" id="blob1"></div>
+    <div class="blob" id="blob2"></div>
+    <div class="blob" id="blob3"></div>
+
+    <!-- Screen 1: Choose Music App -->
+    <div class="screen active" id="s1">
+      <div class="logo">mood<span>ify</span></div>
+      <div class="tagline">music for your moment</div>
+      <div class="step-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="question">What's ur music app?</div>
+      <div class="q-sub">We'll pull songs from your own library</div>
+      <div class="music-apps">
+        <button class="app-btn" onclick="selectApp(this,'Spotify')">
+          <div class="app-icon spotify">🎵</div>
+          Spotify
+        </button>
+        <button class="app-btn" onclick="selectApp(this,'Apple Music')">
+          <div class="app-icon apple">🎶</div>
+          Apple Music
+        </button>
+        <button class="app-btn" onclick="selectApp(this,'YouTube Music')">
+          <div class="app-icon youtube">▶️</div>
+          YT Music
+        </button>
+        <button class="app-btn" onclick="selectApp(this,'Amazon Music')">
+          <div class="app-icon amazon">🎼</div>
+          Amazon
+        </button>
+      </div>
+      <button class="btn-primary" id="s1next" onclick="goTo(2)" disabled>Continue</button>
+    </div>
+
+    <!-- Screen 2: Login -->
+    <div class="screen" id="s2">
+      <div class="logo">mood<span>ify</span></div>
+      <div class="tagline">connect your account</div>
+      <div class="step-dots">
+        <div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div class="login-card">
+        <div class="login-platform">
+          <div class="platform-icon" id="loginIcon">🎵</div>
+          <div>
+            <div class="platform-name" id="loginName">Spotify</div>
+            <div class="platform-sub">Authorise with OAuth 2.0</div>
+          </div>
+        </div>
+
+        <!-- Spotify: real OAuth button -->
+        <div id="spotifyOAuthBtn">
+          <div class="oauth-info">
+            <div class="oauth-info-row">🔒 Secure login via Spotify</div>
+            <div class="oauth-info-row">📋 Reads your liked songs &amp; playlists</div>
+            <div class="oauth-info-row">➕ Creates a private playlist for you</div>
+          </div>
+          <button class="btn-primary green" onclick="startSpotifyAuth()">
+            Continue with <span id="loginBtnName">Spotify</span> →
+          </button>
+        </div>
+
+        <!-- Other apps: coming soon -->
+        <div id="comingSoonMsg" style="display:none;">
+          <div class="coming-soon-box">
+            <div style="font-size:28px;margin-bottom:8px;">🚧</div>
+            <div style="font-size:14px;font-weight:500;color:#fff;margin-bottom:4px;">Coming Soon</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">
+              Only Spotify is supported right now.<br/>More apps coming soon!
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:16px;opacity:0.4;" disabled>Not available yet</button>
+        </div>
+
+        <div class="login-notice" id="loginNotice">We never store your password or personal data</div>
+      </div>
+      <button class="back-btn" onclick="goTo(1)">← go back</button>
+    </div>
+
+    <!-- Screen 3: Mood Selection -->
+    <div class="screen" id="s3">
+      <div class="logo small">mood<span>ify</span></div>
+      <div class="tagline">hey there 👋</div>
+      <div class="step-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+      </div>
+      <div class="question">What's ur mood right now?</div>
+      <div class="moods">
+        <button class="mood-btn mood-happy" onclick="selectMood(this,'happy')">
+          <span class="emoji">😄</span>
+          <span class="label">Happy</span>
+          <span class="desc">upbeat &amp; joyful</span>
+        </button>
+        <button class="mood-btn mood-sad" onclick="selectMood(this,'sad')">
+          <span class="emoji">😔</span>
+          <span class="label">Sad</span>
+          <span class="desc">melancholy feels</span>
+        </button>
+        <button class="mood-btn mood-energetic" onclick="selectMood(this,'energetic')">
+          <span class="emoji">⚡</span>
+          <span class="label">Energetic</span>
+          <span class="desc">pump it up</span>
+        </button>
+        <button class="mood-btn mood-chill" onclick="selectMood(this,'chill')">
+          <span class="emoji">🌊</span>
+          <span class="label">Chill</span>
+          <span class="desc">easy &amp; relaxed</span>
+        </button>
+        <button class="mood-btn mood-romantic" onclick="selectMood(this,'romantic')">
+          <span class="emoji">💗</span>
+          <span class="label">Romantic</span>
+          <span class="desc">love in the air</span>
+        </button>
+        <button class="mood-btn mood-focus" onclick="selectMood(this,'focus')">
+          <span class="emoji">🎯</span>
+          <span class="label">Focus</span>
+          <span class="desc">deep in the zone</span>
+        </button>
+      </div>
+      <button class="btn-primary" id="s3next" onclick="goTo(4)" disabled>Build my playlist</button>
+      <button class="back-btn" onclick="goTo(2)">← go back</button>
+    </div>
+
+    <!-- Screen 4: Playlist Ready -->
+    <div class="screen" id="s4">
+      <div class="success-icon" id="successIcon">✓</div>
+      <div class="question" id="playlistTitle">Your Happy Playlist</div>
+      <div class="playlist-sub" id="playlistSub">Built from your liked songs &amp; playlists</div>
+      <div class="playlist-card">
+        <div class="playlist-header">
+          <div class="playlist-art" id="playlistArt">😄</div>
+          <div>
+            <div class="playlist-title" id="plName">Moodify · Happy</div>
+            <div class="playlist-meta" id="plMeta">6 songs · 22 min · from your library</div>
+          </div>
+        </div>
+        <div class="track-list" id="trackList"></div>
+      </div>
+      <button class="btn-primary green" onclick="openApp()">Open in <span id="openInApp">Spotify</span> →</button>
+      <button class="back-btn" onclick="goTo(3)">← change mood</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</div><!-- /.app -->
+</div><!-- /.phone-frame -->
+</div><!-- /.phone-panel -->
+</div><!-- /.desktop-wrapper -->
+
+</body>
+</html>
