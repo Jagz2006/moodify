@@ -1,8 +1,3 @@
-// ===========================
-//  MOODIFY — app.js
-//  Spotify OAuth + Recommendations API
-// ===========================
-
 const SPOTIFY_CLIENT_ID = "9c6f03a01f474c1bb6da25fdb2e7f996";
 const SPOTIFY_REDIRECT  = "http://127.0.0.1:5173";
 const SPOTIFY_SCOPES    = [
@@ -13,14 +8,12 @@ const SPOTIFY_SCOPES    = [
   "user-read-private",
 ].join(" ");
 
-// ── App state ──
 let chosenApp          = null;
 let chosenMood         = null;
 let spotifyToken       = null;
 let spotifyUser        = null;
 let createdPlaylistUrl = null;
 
-// ── Mood → Recommendations API parameters ──
 const MOOD_SEEDS = {
   happy:     { seed_genres: "pop,happy",                    target_valence: 1.0, target_energy: 0.8, target_tempo: 120 },
   sad:       { seed_genres: "sad,acoustic",                 target_valence: 0.1, target_energy: 0.3, target_tempo: 80  },
@@ -46,9 +39,6 @@ const APP_ICONS = {
   "Amazon Music": { emoji: "🎼", bg: "#00a8e0" },
 };
 
-// ─────────────────────────────────────────────
-//  PKCE HELPERS
-// ─────────────────────────────────────────────
 function generateCodeVerifier(length = 128) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
   const arr = new Uint8Array(length);
@@ -63,9 +53,7 @@ async function generateCodeChallenge(verifier) {
     .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-// ─────────────────────────────────────────────
 //  OAUTH FLOW
-// ─────────────────────────────────────────────
 async function startSpotifyAuth() {
   const verifier  = generateCodeVerifier();
   const challenge = await generateCodeChallenge(verifier);
@@ -88,9 +76,7 @@ async function startSpotifyAuth() {
   window.location.href = "https://accounts.spotify.com/authorize?" + params;
 }
 
-// ─────────────────────────────────────────────
 //  HANDLE CALLBACK
-// ─────────────────────────────────────────────
 async function handleCallback() {
   const params = new URLSearchParams(window.location.search);
   const code   = params.get("code");
@@ -136,9 +122,7 @@ async function handleCallback() {
   return true;
 }
 
-// ─────────────────────────────────────────────
 //  SPOTIFY API HELPERS
-// ─────────────────────────────────────────────
 async function spotifyFetch(url, options = {}) {
   const token = spotifyToken || sessionStorage.getItem("spotify_token");
   if (!token) return null;
@@ -183,9 +167,8 @@ async function fetchAllLikedSongs() {
   return tracks.filter((t) => t && t.id);
 }
 
-// Get mood-matched recommendations seeded by user's own liked songs
 async function fetchMoodRecommendations(likedTracks, mood) {
-  // Use 3 random liked songs as seeds so results stay close to user's taste
+  
   const seedTracks = pickRandom(likedTracks, 3).map((t) => t.id).join(",");
   const moodParams = MOOD_SEEDS[mood] || MOOD_SEEDS.happy;
 
@@ -243,9 +226,6 @@ async function createMoodPlaylist(mood, trackUris) {
   return playlist;
 }
 
-// ─────────────────────────────────────────────
-//  UI HELPERS
-// ─────────────────────────────────────────────
 function showLoadingScreen(message) {
   document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
   let loading = document.getElementById("sLoading");
@@ -281,9 +261,6 @@ function showAuthError(msg) {
   if (notice) { notice.textContent = "⚠️ " + msg; notice.style.color = "#f87171"; }
 }
 
-// ─────────────────────────────────────────────
-//  NAVIGATION
-// ─────────────────────────────────────────────
 function goTo(n) {
   document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
   const next = document.getElementById("s" + n);
@@ -293,9 +270,6 @@ function goTo(n) {
   if (n === 4) startBuildPlaylist();
 }
 
-// ─────────────────────────────────────────────
-//  SCREEN 1 — Select app
-// ─────────────────────────────────────────────
 function selectApp(el, name) {
   document.querySelectorAll(".app-btn").forEach((b) => b.classList.remove("selected"));
   el.classList.add("selected");
@@ -303,9 +277,6 @@ function selectApp(el, name) {
   document.getElementById("s1next").disabled = false;
 }
 
-// ─────────────────────────────────────────────
-//  SCREEN 2 — Login
-// ─────────────────────────────────────────────
 function updateLoginScreen() {
   if (!chosenApp) return;
   const info = APP_ICONS[chosenApp] || { emoji: "🎵", bg: "#1DB954" };
@@ -359,9 +330,6 @@ function logOut() {
   window.location.reload();
 }
 
-// ─────────────────────────────────────────────
-//  SCREEN 3 — Select mood
-// ─────────────────────────────────────────────
 function selectMood(el, mood) {
   document.querySelectorAll(".mood-btn").forEach((b) => b.classList.remove("selected"));
   el.classList.add("selected");
@@ -375,9 +343,6 @@ function selectMood(el, mood) {
   document.getElementById("s3next").disabled = false;
 }
 
-// ─────────────────────────────────────────────
-//  SCREEN 4 — Build playlist using Recommendations API
-// ─────────────────────────────────────────────
 async function startBuildPlaylist() {
   const mood = chosenMood || "happy";
   const meta = MOOD_META[mood];
@@ -385,7 +350,6 @@ async function startBuildPlaylist() {
   showLoadingScreen("Fetching your liked songs...");
 
   try {
-    // 1. Get all liked songs
     const allTracks = await fetchAllLikedSongs();
     console.log("Liked songs fetched:", allTracks.length);
 
@@ -396,12 +360,10 @@ async function startBuildPlaylist() {
       return;
     }
 
-    // 2. Get mood-matched recommendations seeded by liked songs
     updateLoadingMsg("Finding mood-matched songs...");
     const recommendations = await fetchMoodRecommendations(allTracks, mood);
     console.log("Recommendations fetched:", recommendations.length);
 
-    // 3. Prefer tracks that are already in the user's liked songs
     const likedIds = new Set(allTracks.map((t) => t.id));
     const fromLibrary    = recommendations.filter((t) => likedIds.has(t.id));
     const notFromLibrary = recommendations.filter((t) => !likedIds.has(t.id));
@@ -409,21 +371,18 @@ async function startBuildPlaylist() {
     console.log("Matched from library:", fromLibrary.length);
     console.log("New recommendations:", notFromLibrary.length);
 
-    // Fill up to 20: prioritise library matches, then pad with recommendations
     let selected = [...pickRandom(fromLibrary, Math.min(20, fromLibrary.length))];
     if (selected.length < 20) {
       const needed = 20 - selected.length;
       selected = [...selected, ...pickRandom(notFromLibrary, needed)];
     }
 
-    // Final fallback: just use liked songs if recommendations totally failed
     if (selected.length === 0) {
       selected = pickRandom(allTracks, 20);
     }
 
     const display = selected.slice(0, 6);
 
-    // 4. Create the playlist on Spotify
     updateLoadingMsg("Creating your Spotify playlist...");
     const uris     = selected.map((t) => `spotify:track:${t.id}`);
     const playlist = await createMoodPlaylist(mood, uris);
@@ -483,9 +442,7 @@ function renderPlaylistScreen(mood, meta, tracks, playlist) {
   }).join("");
 }
 
-// ─────────────────────────────────────────────
 //  OPEN IN SPOTIFY
-// ─────────────────────────────────────────────
 function openApp() {
   const url = createdPlaylistUrl || sessionStorage.getItem("playlist_url");
   if (url) {
@@ -495,9 +452,6 @@ function openApp() {
   }
 }
 
-// ─────────────────────────────────────────────
-//  BOOT
-// ─────────────────────────────────────────────
 (async function boot() {
   const params = new URLSearchParams(window.location.search);
 
